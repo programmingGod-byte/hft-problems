@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HFT & CF 2200+ Problem Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0b0f;
+    --surface: #111318;
+    --surface2: #181b22;
+    --surface3: #1e2229;
+    --border: #2a2f3a;
+    --border2: #343a47;
+    --text: #e8eaf0;
+    --text2: #8b92a8;
+    --text3: #5a6070;
+    --accent: #4f9cf9;
+    --accent2: #7c5bf9;
+    --green: #3ecf7e;
+    --gold: #f5c842;
+    --red: #f95f5f;
+    --orange: #f97835;
+    --lc: #f97316;
+    --cf: #4f9cf9;
+    --phase-a: #3ecf7e;
+    --phase-b: #4f9cf9;
+    --phase-c: #f5c842;
+    --phase-d: #f95f5f;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d0f14 0%, #111824 50%, #0d1420 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+  .header-inner { max-width: 1600px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+  .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; color: white; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+  .logo-text { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  .logo-sub { font-size: 0.7rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+  .header-stats { display: flex; gap: 1rem; margin-left: auto; }
+  .stat-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 0.3rem 0.85rem; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text2); display: flex; align-items: center; gap: 0.4rem; }
+  .stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-green { background: var(--green); }
+  .dot-gold { background: var(--gold); }
+  .dot-blue { background: var(--accent); }
+  .add-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: white; padding: 0.5rem 1.2rem; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; letter-spacing: 0.02em; }
+  .add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(79,156,249,0.3); }
+
+  /* MAIN */
+  .main { max-width: 1600px; margin: 0 auto; padding: 1.5rem 2rem; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+  .search-wrap { flex: 1; min-width: 260px; position: relative; }
+  .search-wrap svg { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+  .search-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 0.6rem 1rem 0.6rem 2.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--text3); }
+  .filter-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .filter-btn.lc-active { background: var(--lc); border-color: var(--lc); color: white; }
+  .filter-btn.cf-active { background: var(--cf); border-color: var(--cf); color: white; }
+  select.filter-select { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none; }
+  select.filter-select:focus { border-color: var(--accent); color: var(--text); }
+
+  /* PROGRESS BARS */
+  .progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .progress-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.3rem; }
+  .progress-label { font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text2); margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+  .progress-label .count { font-weight: 700; color: var(--text); }
+  .progress-bar { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .fill-green { background: linear-gradient(90deg, var(--green), #2aa562); }
+  .fill-blue { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .fill-gold { background: linear-gradient(90deg, var(--gold), var(--orange)); }
+  .fill-red { background: linear-gradient(90deg, var(--red), #c93f3f); }
+
+  /* TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .table-header { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 130px 110px; gap: 0; border-bottom: 1px solid var(--border); padding: 0; }
+  .th { padding: 0.7rem 0.75rem; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; }
+  .table-body { }
+  .problem-row { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 130px 110px; gap: 0; border-bottom: 1px solid var(--border); transition: background 0.12s; align-items: center; }
+  .problem-row:last-child { border-bottom: none; }
+  .problem-row:hover { background: var(--surface2); }
+  .problem-row.solved-row { background: rgba(62,207,126,0.04); }
+  .problem-row.solved-row:hover { background: rgba(62,207,126,0.08); }
+  .problem-row.important-row { border-left: 3px solid var(--gold); }
+  .td { padding: 0.65rem 0.75rem; font-size: 0.8rem; overflow: hidden; }
+  .td-check { display: flex; justify-content: center; align-items: center; }
+  
+  /* Checkboxes */
+  .check-solved { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border2); background: transparent; cursor: pointer; appearance: none; position: relative; transition: all 0.15s; flex-shrink: 0; }
+  .check-solved:checked { background: var(--green); border-color: var(--green); }
+  .check-solved:checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 11px; color: white; font-weight: 700; }
+  .check-imp { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border2); background: transparent; cursor: pointer; appearance: none; position: relative; transition: all 0.15s; flex-shrink: 0; }
+  .check-imp:checked { background: var(--gold); border-color: var(--gold); }
+  .check-imp:checked::after { content: '★'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 10px; color: white; font-weight: 700; }
+
+  /* Tags */
+  .type-tag { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: 0.05em; }
+  .tag-lc { background: rgba(249,115,22,0.15); color: var(--lc); border: 1px solid rgba(249,115,22,0.25); }
+  .tag-cf { background: rgba(79,156,249,0.12); color: var(--cf); border: 1px solid rgba(79,156,249,0.2); }
+  .num-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text2); }
+  .name-cell { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .prob-name { font-size: 0.82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prob-name a { color: inherit; text-decoration: none; }
+  .prob-name a:hover { color: var(--accent); }
+  .prob-contest { font-size: 0.68rem; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; }
+  .rating-tag { display: inline-block; padding: 0.18rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .r-gray { background: rgba(139,146,168,0.12); color: var(--text2); }
+  .r-green { background: rgba(62,207,126,0.12); color: var(--green); }
+  .r-blue { background: rgba(79,156,249,0.12); color: var(--accent); }
+  .r-gold { background: rgba(245,200,66,0.12); color: var(--gold); }
+  .r-red { background: rgba(249,95,95,0.12); color: var(--red); }
+  .topic-cell { font-size: 0.75rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; }
+  .phase-tag { display: inline-flex; align-items: center; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; white-space: nowrap; }
+  .phase-a { background: rgba(62,207,126,0.1); color: var(--phase-a); border: 1px solid rgba(62,207,126,0.2); }
+  .phase-b { background: rgba(79,156,249,0.1); color: var(--phase-b); border: 1px solid rgba(79,156,249,0.2); }
+  .phase-c { background: rgba(245,200,66,0.1); color: var(--phase-c); border: 1px solid rgba(245,200,66,0.2); }
+  .phase-d { background: rgba(249,95,95,0.1); color: var(--phase-d); border: 1px solid rgba(249,95,95,0.2); }
+  .phase-lc1 { background: rgba(249,115,22,0.1); color: var(--lc); border: 1px solid rgba(249,115,22,0.2); }
+  .phase-lc2 { background: rgba(124,91,249,0.1); color: var(--accent2); border: 1px solid rgba(124,91,249,0.2); }
+  .phase-lc3 { background: rgba(249,95,95,0.1); color: var(--red); border: 1px solid rgba(249,95,95,0.2); }
+
+  /* Note button */
+  .note-btn { background: none; border: 1px solid var(--border); color: var(--text3); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  .note-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .note-btn.has-note { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.06); }
+  .del-btn { background: none; border: none; color: var(--text3); cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 3px; transition: color 0.15s; font-size: 0.9rem; }
+  .del-btn:hover { color: var(--red); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 14px; width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 2rem; }
+  .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group.full { grid-column: 1/-1; }
+  label { font-size: 0.75rem; font-weight: 600; color: var(--text2); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; }
+  .form-input, .form-select, .form-textarea { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; outline: none; transition: border-color 0.2s; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
+  .btn-cancel { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 0.6rem 1.3rem; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; }
+  .btn-cancel:hover { border-color: var(--border2); color: var(--text); }
+  .btn-save { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: white; padding: 0.6rem 1.5rem; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,156,249,0.3); }
+
+  /* Note modal */
+  .note-modal { width: 480px; }
+  .note-content { font-size: 0.82rem; color: var(--text2); margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+
+  /* Loading */
+  .loading { display: flex; align-items: center; justify-content: center; padding: 4rem; gap: 1rem; color: var(--text2); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+  .spinner { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty { text-align: center; padding: 3rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-top: 1px solid var(--border); background: var(--surface); }
+  .page-info { font-size: 0.75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+  .page-btns { display: flex; gap: 0.4rem; }
+  .page-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 0.35rem 0.7rem; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; cursor: pointer; transition: all 0.15s; }
+  .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .page-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; color: var(--text); z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; gap: 0.5rem; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .table-header, .problem-row { grid-template-columns: 44px 55px 50px 1fr 80px 85px 100px 80px; }
+    .td:nth-child(5), .th:nth-child(5), .td:nth-child(6), .th:nth-child(6) { display: none; }
+  }
+  @media (max-width: 768px) {
+    header, .main { padding-left: 1rem; padding-right: 1rem; }
+    .header-stats { display: none; }
+    .table-header, .problem-row { grid-template-columns: 44px 44px 55px 1fr 90px 90px; }
+    .td:nth-child(n+7), .th:nth-child(n+7) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">HF</div>
+      <div>
+        <div class="logo-text">HFT Problem Tracker</div>
+        <div class="logo-sub">IIT MANDI · CF 1600→2200+ · JANE STREET</div>
+      </div>
+    </a>
+    <div class="header-stats">
+      <div class="stat-pill"><span class="dot dot-green"></span><span id="stat-solved">0</span> Solved</div>
+      <div class="stat-pill"><span class="dot dot-gold"></span><span id="stat-important">0</span> Starred</div>
+      <div class="stat-pill"><span class="dot dot-blue"></span><span id="stat-total">0</span> Total</div>
+    </div>
+    <button class="add-btn" onclick="openAdd()">＋ Add Problem</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Progress -->
+  <div class="progress-grid" id="progress-grid"></div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="text" id="search" placeholder="Search problems, topics, contests..." oninput="applyFilters()">
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn active" data-type="ALL" onclick="setType(this)">All</button>
+      <button class="filter-btn" data-type="LC" onclick="setType(this)">LeetCode</button>
+      <button class="filter-btn" data-type="CF" onclick="setType(this)">Codeforces</button>
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn" data-status="ALL" onclick="setStatus(this)">All Status</button>
+      <button class="filter-btn" data-status="UNSOLVED" onclick="setStatus(this)">Unsolved</button>
+      <button class="filter-btn" data-status="SOLVED" onclick="setStatus(this)">Solved</button>
+      <button class="filter-btn" data-status="IMPORTANT" onclick="setStatus(this)">⭐ Starred</button>
+    </div>
+    <select class="filter-select" id="phase-filter" onchange="applyFilters()">
+      <option value="">All Phases</option>
+      <option value="Phase A">CF Phase A (1600-1800)</option>
+      <option value="Phase B">CF Phase B (1800-2000)</option>
+      <option value="Phase C">CF Phase C (2000-2100)</option>
+      <option value="Phase D">CF Phase D (2100-2200+)</option>
+      <option value="LC Phase 1">LC Phase 1</option>
+      <option value="LC Phase 2">LC Phase 2</option>
+      <option value="LC Phase 3">LC Phase 3</option>
+      <option value="Custom">Custom</option>
+    </select>
+    <select class="filter-select" id="cat-filter" onchange="applyFilters()">
+      <option value="">All Categories</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <div class="th">✓</div>
+      <div class="th">★</div>
+      <div class="th">Type</div>
+      <div class="th">Problem</div>
+      <div class="th">Topic</div>
+      <div class="th">Rating</div>
+      <div class="th">Phase</div>
+      <div class="th">Category</div>
+      <div class="th">Note</div>
+      <div class="th">Actions</div>
+    </div>
+    <div class="table-body" id="table-body">
+      <div class="loading"><div class="spinner"></div> Loading problems from database...</div>
+    </div>
+    <div class="pagination" id="pagination" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add New Problem</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Type</label>
+        <select class="form-select" id="f-type">
+          <option value="CF">Codeforces</option>
+          <option value="LC">LeetCode</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Number / ID</label>
+        <input class="form-input" id="f-number" placeholder="e.g. 1234E or 1547">
+      </div>
+      <div class="form-group full">
+        <label>Problem Name *</label>
+        <input class="form-input" id="f-name" placeholder="e.g. Array Division">
+      </div>
+      <div class="form-group full">
+        <label>Contest Name</label>
+        <input class="form-input" id="f-contest" placeholder="e.g. Codeforces Round 500 (Div. 2)">
+      </div>
+      <div class="form-group">
+        <label>Rating / Difficulty</label>
+        <input class="form-input" id="f-rating" placeholder="e.g. 1800 or Hard">
+      </div>
+      <div class="form-group">
+        <label>Phase</label>
+        <select class="form-select" id="f-phase">
+          <option value="Phase A">CF Phase A</option>
+          <option value="Phase B">CF Phase B</option>
+          <option value="Phase C">CF Phase C</option>
+          <option value="Phase D">CF Phase D</option>
+          <option value="LC Phase 1">LC Phase 1</option>
+          <option value="LC Phase 2">LC Phase 2</option>
+          <option value="LC Phase 3">LC Phase 3</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Topic / Key Concept</label>
+        <input class="form-input" id="f-topic" placeholder="e.g. DP + Segment Tree">
+      </div>
+      <div class="form-group full">
+        <label>Category</label>
+        <input class="form-input" id="f-category" placeholder="e.g. Dynamic Programming">
+      </div>
+      <div class="form-group full">
+        <label>HFT Relevance</label>
+        <input class="form-input" id="f-hft" placeholder="e.g. Order book management">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn-save" onclick="saveProblem()">Save Problem</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Modal -->
+<div class="modal-overlay" id="note-modal">
+  <div class="modal note-modal">
+    <div class="modal-title" id="note-modal-title">Add Note</div>
+    <div class="note-content" id="note-problem-name"></div>
+    <div class="form-group">
+      <label>Your Notes</label>
+      <textarea class="form-textarea" id="note-text" rows="5" placeholder="Write your approach, key insight, time complexity, mistakes made..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('note-modal')">Cancel</button>
+      <button class="btn-save" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let problems = [];
+let filtered = [];
+let currentType = 'ALL';
+let currentStatus = 'ALL';
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let noteTargetId = null;
+
+async function load() {
+  try {
+    const res = await fetch('/api/problems');
+    problems = await res.json();
+    populateCatFilter();
+    applyFilters();
+    updateStats();
+    renderProgress();
+  } catch(e) {
+    document.getElementById('table-body').innerHTML = '<div class="empty">❌ Could not connect to database. Is the server running?</div>';
+  }
+}
+
+function populateCatFilter() {
+  const cats = [...new Set(problems.map(p => p.category))].sort();
+  const sel = document.getElementById('cat-filter');
+  cats.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
+  });
+}
+
+function setType(btn) {
+  document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active','lc-active','cf-active'));
+  currentType = btn.dataset.type;
+  if(currentType === 'LC') btn.classList.add('lc-active');
+  else if(currentType === 'CF') btn.classList.add('cf-active');
+  else btn.classList.add('active');
+  currentPage = 1;
+  applyFilters();
+}
+
+function setStatus(btn) {
+  document.querySelectorAll('[data-status]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentStatus = btn.dataset.status;
+  currentPage = 1;
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const phase = document.getElementById('phase-filter').value;
+  const cat = document.getElementById('cat-filter').value;
+  filtered = problems.filter(p => {
+    if(currentType !== 'ALL' && p.type !== currentType) return false;
+    if(currentStatus === 'SOLVED' && !p.solved) return false;
+    if(currentStatus === 'UNSOLVED' && p.solved) return false;
+    if(currentStatus === 'IMPORTANT' && !p.important) return false;
+    if(phase && p.phase !== phase) return false;
+    if(cat && p.category !== cat) return false;
+    if(q) {
+      const hay = `${p.name} ${p.number} ${p.topic} ${p.contest} ${p.category} ${p.hft_relevance}`.toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  currentPage = 1;
+  renderTable();
+  renderPagination();
+}
+
+function renderTable() {
+  const body = document.getElementById('table-body');
+  const start = (currentPage-1)*PAGE_SIZE;
+  const page = filtered.slice(start, start+PAGE_SIZE);
+  if(!page.length) { body.innerHTML = '<div class="empty">No problems match your filters.</div>'; return; }
+  body.innerHTML = page.map(p => rowHTML(p)).join('');
+}
+
+function rowHTML(p) {
+  const ratingClass = getRatingClass(p.rating, p.type);
+  const phaseClass = getPhaseClass(p.phase);
+  const link = p.type === 'LC'
+    ? `https://leetcode.com/problems/${p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}/`
+    : `https://codeforces.com/problemset/problem/${p.number.replace(/([0-9]+)([A-Z].*)/, '$1/$2')}`;
+  return `<div class="problem-row ${p.solved?'solved-row':''} ${p.important?'important-row':''}" id="row-${p.id}">
+    <div class="td td-check"><input type="checkbox" class="check-solved" ${p.solved?'checked':''} onchange="toggleSolved(${p.id},this.checked)" title="Mark solved"></div>
+    <div class="td td-check"><input type="checkbox" class="check-imp" ${p.important?'checked':''} onchange="toggleImportant(${p.id},this.checked)" title="Star problem"></div>
+    <div class="td"><span class="type-tag ${p.type==='LC'?'tag-lc':'tag-cf'}">${p.type}</span></div>
+    <div class="td"><div class="name-cell">
+      <div class="prob-name"><a href="${link}" target="_blank" title="${p.name}">${p.number ? `[${p.number}] `:''} ${p.name}</a></div>
+      <div class="prob-contest" title="${p.contest||''}">${p.contest||'—'}</div>
+    </div></div>
+    <div class="td"><div class="topic-cell" title="${p.topic||''}">${p.topic||'—'}</div></div>
+    <div class="td"><span class="rating-tag ${ratingClass}">${p.rating||'—'}</span></div>
+    <div class="td"><span class="phase-tag ${phaseClass}">${p.phase||'—'}</span></div>
+    <div class="td"><div class="topic-cell" title="${p.category||''}">${p.category||'—'}</div></div>
+    <div class="td"><button class="note-btn ${p.note?'has-note':''}" onclick="openNote(${p.id})">${p.note?'📝 Edit':'+ Note'}</button></div>
+    <div class="td"><button class="del-btn" onclick="deleteProblem(${p.id})" title="Delete">✕</button></div>
+  </div>`;
+}
+
+function getRatingClass(r, type) {
+  if(type === 'LC') return 'r-red';
+  const n = parseInt(r);
+  if(!n) return 'r-gray';
+  if(n < 1700) return 'r-green';
+  if(n < 1900) return 'r-blue';
+  if(n < 2100) return 'r-gold';
+  return 'r-red';
+}
+
+function getPhaseClass(ph) {
+  if(!ph) return '';
+  const m = {'Phase A':'phase-a','Phase B':'phase-b','Phase C':'phase-c','Phase D':'phase-d','LC Phase 1':'phase-lc1','LC Phase 2':'phase-lc2','LC Phase 3':'phase-lc3'};
+  return m[ph] || 'phase-a';
+}
+
+function renderPagination() {
+  const total = filtered.length;
+  const pages = Math.ceil(total/PAGE_SIZE);
+  const pg = document.getElementById('pagination');
+  if(pages <= 1) { pg.style.display='none'; return; }
+  pg.style.display='flex';
+  const start = (currentPage-1)*PAGE_SIZE+1;
+  const end = Math.min(currentPage*PAGE_SIZE, total);
+  let btns = '';
+  for(let i=1;i<=pages;i++) {
+    if(i===1||i===pages||Math.abs(i-currentPage)<=1) btns+=`<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    else if(Math.abs(i-currentPage)===2) btns+=`<span style="color:var(--text3);padding:0.3rem">…</span>`;
+  }
+  pg.innerHTML = `<div class="page-info">Showing ${start}–${end} of ${total}</div><div class="page-btns">${btns}</div>`;
+}
+
+function goPage(n) { currentPage=n; renderTable(); renderPagination(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function updateStats() {
+  document.getElementById('stat-solved').textContent = problems.filter(p=>p.solved).length;
+  document.getElementById('stat-important').textContent = problems.filter(p=>p.important).length;
+  document.getElementById('stat-total').textContent = problems.length;
+}
+
+function renderProgress() {
+  const lc = problems.filter(p=>p.type==='LC');
+  const cf = problems.filter(p=>p.type==='CF');
+  const cfA = cf.filter(p=>p.phase==='Phase A');
+  const cfB = cf.filter(p=>p.phase==='Phase B');
+  const cfC = cf.filter(p=>p.phase==='Phase C');
+  const cfD = cf.filter(p=>p.phase==='Phase D');
+  const grid = document.getElementById('progress-grid');
+  const items = [
+    { label:'LC Hard Total', total:lc.length, solved:lc.filter(p=>p.solved).length, cls:'fill-blue' },
+    { label:'CF Phase A (1600-1800)', total:cfA.length, solved:cfA.filter(p=>p.solved).length, cls:'fill-green' },
+    { label:'CF Phase B (1800-2000)', total:cfB.length, solved:cfB.filter(p=>p.solved).length, cls:'fill-blue' },
+    { label:'CF Phase C (2000-2100)', total:cfC.length, solved:cfC.filter(p=>p.solved).length, cls:'fill-gold' },
+    { label:'CF Phase D (2100-2200+)', total:cfD.length, solved:cfD.filter(p=>p.solved).length, cls:'fill-red' },
+    { label:'All Problems', total:problems.length, solved:problems.filter(p=>p.solved).length, cls:'fill-green' },
+  ];
+  grid.innerHTML = items.map(i => {
+    const pct = i.total ? Math.round(i.solved/i.total*100) : 0;
+    return `<div class="progress-card">
+      <div class="progress-label"><span>${i.label}</span><span class="count">${i.solved}/${i.total} (${pct}%)</span></div>
+      <div class="progress-bar"><div class="progress-fill ${i.cls}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleSolved(id, val) {
+  const p = problems.find(x=>x.id===id);
+  if(p) { p.solved = val; updateStats(); renderProgress(); }
+  try {
+    await fetch(`/api/problems/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({solved:val}) });
+    showToast(val ? '✅ Marked as solved!' : '↩ Marked unsolved', 'success');
+    const row = document.getElementById(`row-${id}`);
+    if(row) { row.classList.toggle('solved-row', val); }
+  } catch(e) { showToast('❌ Error saving', 'error'); }
+}
+
+async function toggleImportant(id, val) {
+  const p = problems.find(x=>x.id===id);
+  if(p) { p.important = val; updateStats(); }
+  try {
+    await fetch(`/api/problems/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({important:val}) });
+    showToast(val ? '⭐ Starred!' : '✩ Unstarred', 'success');
+    const row = document.getElementById(`row-${id}`);
+    if(row) { row.classList.toggle('important-row', val); }
+  } catch(e) { showToast('❌ Error saving', 'error'); }
+}
+
+function openNote(id) {
+  noteTargetId = id;
+  const p = problems.find(x=>x.id===id);
+  document.getElementById('note-modal-title').textContent = 'Note: ' + (p.number||'') + ' ' + p.name.substring(0,40);
+  document.getElementById('note-problem-name').textContent = p.category + ' · ' + (p.topic||'');
+  document.getElementById('note-text').value = p.note || '';
+  openModal('note-modal');
+}
+
+async function saveNote() {
+  const note = document.getElementById('note-text').value;
+  const p = problems.find(x=>x.id===noteTargetId);
+  if(p) p.note = note;
+  try {
+    await fetch(`/api/problems/${noteTargetId}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({note}) });
+    showToast('📝 Note saved!', 'success');
+    closeModal('note-modal');
+    renderTable();
+  } catch(e) { showToast('❌ Error saving note', 'error'); }
+}
+
+function openAdd() {
+  document.getElementById('modal-title').textContent = 'Add New Problem';
+  ['f-type','f-number','f-name','f-contest','f-rating','f-topic','f-category','f-hft'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el.tagName==='SELECT') el.value = el.options[0].value;
+    else el.value = '';
+  });
+  openModal('add-modal');
+}
+
+async function saveProblem() {
+  const name = document.getElementById('f-name').value.trim();
+  if(!name) { showToast('❌ Problem name is required', 'error'); return; }
+  const body = {
+    type: document.getElementById('f-type').value,
+    number: document.getElementById('f-number').value.trim(),
+    name,
+    contest: document.getElementById('f-contest').value.trim(),
+    rating: document.getElementById('f-rating').value.trim(),
+    topic: document.getElementById('f-topic').value.trim(),
+    hft_relevance: document.getElementById('f-hft').value.trim(),
+    category: document.getElementById('f-category').value.trim() || 'Custom',
+    phase: document.getElementById('f-phase').value,
+  };
+  try {
+    const res = await fetch('/api/problems', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const newP = await res.json();
+    problems.push(newP);
+    closeModal('add-modal');
+    applyFilters(); updateStats(); renderProgress();
+    showToast('✅ Problem added!', 'success');
+  } catch(e) { showToast('❌ Error adding problem', 'error'); }
+}
+
+async function deleteProblem(id) {
+  if(!confirm('Delete this problem permanently?')) return;
+  try {
+    await fetch(`/api/problems/${id}`, { method:'DELETE' });
+    problems = problems.filter(p=>p.id!==id);
+    applyFilters(); updateStats(); renderProgress();
+    showToast('🗑 Problem deleted', 'success');
+  } catch(e) { showToast('❌ Error deleting', 'error'); }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open')); });
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+load();
+</script>
+</body>
+</html>
