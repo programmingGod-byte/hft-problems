@@ -30,6 +30,16 @@
     --phase-d: #f95f5f;
     --radius: 10px;
     --radius-sm: 6px;
+    /* C++ syntax colors */
+    --cpp-keyword: #c792ea;
+    --cpp-type: #82aaff;
+    --cpp-string: #c3e88d;
+    --cpp-number: #f78c6c;
+    --cpp-comment: #546e7a;
+    --cpp-preprocessor: #89ddff;
+    --cpp-function: #82aaff;
+    --cpp-operator: #89ddff;
+    --cpp-stl: #ffcb6b;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
@@ -89,10 +99,10 @@
 
   /* TABLE */
   .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .table-header { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 130px 110px; gap: 0; border-bottom: 1px solid var(--border); padding: 0; }
+  .table-header { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 150px 110px; gap: 0; border-bottom: 1px solid var(--border); padding: 0; }
   .th { padding: 0.7rem 0.75rem; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; }
   .table-body { }
-  .problem-row { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 130px 110px; gap: 0; border-bottom: 1px solid var(--border); transition: background 0.12s; align-items: center; }
+  .problem-row { display: grid; grid-template-columns: 44px 60px 55px 1fr 1fr 90px 90px 110px 150px 110px; gap: 0; border-bottom: 1px solid var(--border); transition: background 0.12s; align-items: center; }
   .problem-row:last-child { border-bottom: none; }
   .problem-row:hover { background: var(--surface2); }
   .problem-row.solved-row { background: rgba(62,207,126,0.04); }
@@ -135,15 +145,19 @@
   .phase-lc2 { background: rgba(124,91,249,0.1); color: var(--accent2); border: 1px solid rgba(124,91,249,0.2); }
   .phase-lc3 { background: rgba(249,95,95,0.1); color: var(--red); border: 1px solid rgba(249,95,95,0.2); }
 
-  /* Note button */
-  .note-btn { background: none; border: 1px solid var(--border); color: var(--text3); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  /* Action buttons */
+  .action-cell { display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
+  .note-btn { background: none; border: 1px solid var(--border); color: var(--text3); padding: 0.22rem 0.5rem; border-radius: 4px; font-size: 0.68rem; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
   .note-btn:hover { border-color: var(--accent); color: var(--accent); }
   .note-btn.has-note { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.06); }
+  .code-btn { background: none; border: 1px solid var(--border); color: var(--text3); padding: 0.22rem 0.5rem; border-radius: 4px; font-size: 0.68rem; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  .code-btn:hover { border-color: var(--cpp-keyword); color: var(--cpp-keyword); }
+  .code-btn.has-code { border-color: var(--cpp-preprocessor); color: var(--cpp-preprocessor); background: rgba(137,221,255,0.06); }
   .del-btn { background: none; border: none; color: var(--text3); cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 3px; transition: color 0.15s; font-size: 0.9rem; }
   .del-btn:hover { color: var(--red); }
 
   /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
   .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 14px; width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 2rem; }
   .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text); }
@@ -163,6 +177,73 @@
   /* Note modal */
   .note-modal { width: 480px; }
   .note-content { font-size: 0.82rem; color: var(--text2); margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== CODE MODAL ===== */
+  .code-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .code-modal-overlay.open { opacity: 1; pointer-events: all; }
+  .code-modal { background: #0d1117; border: 1px solid #30363d; border-radius: 14px; width: 900px; max-width: 96vw; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+
+  /* Code modal header */
+  .code-modal-header { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border-bottom: 1px solid #30363d; background: #161b22; flex-shrink: 0; }
+  .code-modal-dots { display: flex; gap: 6px; }
+  .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green2 { background: #28c840; }
+  .code-modal-filename { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #8b949e; flex: 1; }
+  .code-modal-lang { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; background: rgba(124,91,249,0.2); color: var(--cpp-keyword); padding: 0.15rem 0.6rem; border-radius: 4px; border: 1px solid rgba(124,91,249,0.3); }
+  .code-modal-actions { display: flex; gap: 0.5rem; }
+  .code-header-btn { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 0.3rem 0.75rem; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; }
+  .code-header-btn:hover { color: var(--text); border-color: #58a6ff; }
+  .code-header-btn.active-edit { background: rgba(79,156,249,0.15); border-color: var(--accent); color: var(--accent); }
+
+  /* Tab bar */
+  .code-tabs { display: flex; border-bottom: 1px solid #30363d; background: #161b22; flex-shrink: 0; }
+  .code-tab { padding: 0.55rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #8b949e; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .code-tab:hover { color: var(--text); }
+  .code-tab.active { color: #e6edf3; border-bottom-color: var(--accent); background: rgba(79,156,249,0.05); }
+
+  /* Code content area */
+  .code-content { flex: 1; overflow: hidden; position: relative; min-height: 0; }
+
+  /* View mode: highlighted code */
+  .code-view { display: block; padding: 0; margin: 0; overflow: auto; height: 100%; background: #0d1117; }
+  .code-view-inner { display: flex; min-height: 100%; }
+  .line-numbers { padding: 1.2rem 0.75rem 1.2rem 1rem; background: #0d1117; color: #3d444d; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; text-align: right; user-select: none; border-right: 1px solid #21262d; flex-shrink: 0; min-width: 48px; }
+  .code-lines { padding: 1.2rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; color: #e6edf3; white-space: pre; flex: 1; overflow: auto; }
+
+  /* Edit mode: textarea */
+  .code-editor { display: none; height: 100%; position: relative; }
+  .code-editor.visible { display: flex; flex-direction: column; }
+  .code-textarea { flex: 1; background: #0d1117; color: #e6edf3; border: none; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; padding: 1.2rem 1.5rem; resize: none; tab-size: 4; width: 100%; }
+  .code-textarea::placeholder { color: #3d444d; }
+
+  /* Note panel inside code modal */
+  .code-note-panel { padding: 1rem 1.5rem; border-top: 1px solid #30363d; background: #161b22; flex-shrink: 0; max-height: 180px; overflow-y: auto; }
+  .code-note-panel.edit-mode textarea { background: #0d1117; color: #e6edf3; border: 1px solid #30363d; border-radius: 6px; padding: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; width: 100%; min-height: 90px; resize: vertical; outline: none; }
+  .code-note-panel.edit-mode textarea:focus { border-color: var(--accent); }
+  .note-display { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #8b949e; white-space: pre-wrap; line-height: 1.6; }
+  .note-display:empty::before { content: 'No notes yet — click Edit to add.'; color: #3d444d; font-style: italic; }
+  .note-label { font-size: 0.68rem; color: #3d444d; letter-spacing: 0.08em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem; }
+
+  /* Code modal footer */
+  .code-modal-footer { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.2rem; border-top: 1px solid #30363d; background: #161b22; flex-shrink: 0; }
+  .code-footer-info { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #3d444d; display: flex; gap: 1rem; }
+  .code-footer-save { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: white; padding: 0.45rem 1.2rem; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; }
+  .code-footer-save:hover { box-shadow: 0 4px 16px rgba(79,156,249,0.35); transform: translateY(-1px); }
+  .copy-flash { color: var(--green); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; opacity: 0; transition: opacity 0.3s; }
+  .copy-flash.show { opacity: 1; }
+
+  /* C++ Syntax highlight token styles */
+  .tok-kw { color: var(--cpp-keyword); font-style: normal; }
+  .tok-type { color: var(--cpp-type); }
+  .tok-str { color: var(--cpp-string); }
+  .tok-num { color: var(--cpp-number); }
+  .tok-cmt { color: var(--cpp-comment); font-style: italic; }
+  .tok-pre { color: var(--cpp-preprocessor); }
+  .tok-stl { color: var(--cpp-stl); }
+  .tok-fn { color: #dcdcaa; }
+  .tok-op { color: var(--cpp-operator); }
 
   /* Loading */
   .loading { display: flex; align-items: center; justify-content: center; padding: 4rem; gap: 1rem; color: var(--text2); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
@@ -187,13 +268,13 @@
 
   /* Responsive */
   @media (max-width: 1100px) {
-    .table-header, .problem-row { grid-template-columns: 44px 55px 50px 1fr 80px 85px 100px 80px; }
+    .table-header, .problem-row { grid-template-columns: 44px 55px 50px 1fr 80px 85px 100px 150px 80px; }
     .td:nth-child(5), .th:nth-child(5), .td:nth-child(6), .th:nth-child(6) { display: none; }
   }
   @media (max-width: 768px) {
     header, .main { padding-left: 1rem; padding-right: 1rem; }
     .header-stats { display: none; }
-    .table-header, .problem-row { grid-template-columns: 44px 44px 55px 1fr 90px 90px; }
+    .table-header, .problem-row { grid-template-columns: 44px 44px 55px 1fr 150px 90px; }
     .td:nth-child(n+7), .th:nth-child(n+7) { display: none; }
   }
 </style>
@@ -219,10 +300,8 @@
 </header>
 
 <div class="main">
-  <!-- Progress -->
   <div class="progress-grid" id="progress-grid"></div>
 
-  <!-- Controls -->
   <div class="controls">
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -255,7 +334,6 @@
     </select>
   </div>
 
-  <!-- Table -->
   <div class="table-wrap">
     <div class="table-header">
       <div class="th">✓</div>
@@ -266,8 +344,8 @@
       <div class="th">Rating</div>
       <div class="th">Phase</div>
       <div class="th">Category</div>
-      <div class="th">Note</div>
       <div class="th">Actions</div>
+      <div class="th">Del</div>
     </div>
     <div class="table-body" id="table-body">
       <div class="loading"><div class="spinner"></div> Loading problems from database...</div>
@@ -276,7 +354,7 @@
   </div>
 </div>
 
-<!-- Add/Edit Modal -->
+<!-- Add Problem Modal -->
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Add New Problem</div>
@@ -353,9 +431,75 @@
   </div>
 </div>
 
+<!-- ===== CODE MODAL ===== -->
+<div class="code-modal-overlay" id="code-modal">
+  <div class="code-modal">
+    <!-- Header -->
+    <div class="code-modal-header">
+      <div class="code-modal-dots">
+        <div class="code-dot dot-red"></div>
+        <div class="code-dot dot-yellow"></div>
+        <div class="code-dot dot-green2"></div>
+      </div>
+      <div class="code-modal-filename" id="cm-filename">solution.cpp</div>
+      <div class="code-modal-lang">C++17</div>
+      <div class="code-modal-actions">
+        <button class="code-header-btn" id="cm-copy-btn" onclick="copyCode()">⎘ Copy</button>
+        <button class="code-header-btn" id="cm-edit-btn" onclick="toggleCodeEdit()">✎ Edit</button>
+        <button class="code-header-btn" onclick="closeCodeModal()">✕</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="code-tabs">
+      <div class="code-tab active" id="tab-code" onclick="switchTab('code')">solution.cpp</div>
+      <div class="code-tab" id="tab-note" onclick="switchTab('note')">notes.md</div>
+    </div>
+
+    <!-- Code content -->
+    <div class="code-content" id="cm-code-panel">
+      <!-- VIEW mode -->
+      <div class="code-view" id="cm-view">
+        <div class="code-view-inner">
+          <div class="line-numbers" id="cm-line-nums"></div>
+          <div class="code-lines" id="cm-highlighted"></div>
+        </div>
+      </div>
+      <!-- EDIT mode -->
+      <div class="code-editor" id="cm-editor">
+        <textarea class="code-textarea" id="cm-textarea"
+          placeholder="// Write your C++ solution here&#10;#include &lt;bits/stdc++.h&gt;&#10;using namespace std;&#10;&#10;int main() {&#10;    // your code&#10;}"
+          spellcheck="false"
+          oninput="onCodeInput()"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Note panel (shown when tab = note) -->
+    <div class="code-note-panel" id="cm-note-panel" style="display:none">
+      <div class="note-label">Notes / Approach</div>
+      <div class="note-display" id="cm-note-display"></div>
+      <textarea class="form-textarea" id="cm-note-textarea" rows="4" placeholder="Key insight, time complexity, edge cases, mistakes..." style="display:none; margin-top:0.5rem"></textarea>
+    </div>
+
+    <!-- Footer -->
+    <div class="code-modal-footer">
+      <div class="code-footer-info">
+        <span id="cm-line-count">0 lines</span>
+        <span id="cm-char-count">0 chars</span>
+        <span class="copy-flash" id="cm-copy-flash">Copied!</span>
+      </div>
+      <button class="code-footer-save" id="cm-save-btn" onclick="saveCode()" style="display:none">💾 Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+// ============================================================
+// STATE
+// ============================================================
 let problems = [];
 let filtered = [];
 let currentType = 'ALL';
@@ -364,6 +508,14 @@ let currentPage = 1;
 const PAGE_SIZE = 50;
 let noteTargetId = null;
 
+// Code modal state
+let codeTargetId = null;
+let codeEditMode = false;
+let codeActiveTab = 'code';
+
+// ============================================================
+// LOAD & INIT
+// ============================================================
 async function load() {
   try {
     const res = await fetch('/api/problems');
@@ -387,22 +539,23 @@ function populateCatFilter() {
   });
 }
 
+// ============================================================
+// FILTERS
+// ============================================================
 function setType(btn) {
   document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active','lc-active','cf-active'));
   currentType = btn.dataset.type;
   if(currentType === 'LC') btn.classList.add('lc-active');
   else if(currentType === 'CF') btn.classList.add('cf-active');
   else btn.classList.add('active');
-  currentPage = 1;
-  applyFilters();
+  currentPage = 1; applyFilters();
 }
 
 function setStatus(btn) {
   document.querySelectorAll('[data-status]').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentStatus = btn.dataset.status;
-  currentPage = 1;
-  applyFilters();
+  currentPage = 1; applyFilters();
 }
 
 function applyFilters() {
@@ -427,6 +580,9 @@ function applyFilters() {
   renderPagination();
 }
 
+// ============================================================
+// TABLE RENDER
+// ============================================================
 function renderTable() {
   const body = document.getElementById('table-body');
   const start = (currentPage-1)*PAGE_SIZE;
@@ -441,6 +597,8 @@ function rowHTML(p) {
   const link = p.type === 'LC'
     ? `https://leetcode.com/problems/${p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}/`
     : `https://codeforces.com/problemset/problem/${p.number.replace(/([0-9]+)([A-Z].*)/, '$1/$2')}`;
+  const hasCode = !!(p.code && p.code.trim());
+  const hasNote = !!(p.note && p.note.trim());
   return `<div class="problem-row ${p.solved?'solved-row':''} ${p.important?'important-row':''}" id="row-${p.id}">
     <div class="td td-check"><input type="checkbox" class="check-solved" ${p.solved?'checked':''} onchange="toggleSolved(${p.id},this.checked)" title="Mark solved"></div>
     <div class="td td-check"><input type="checkbox" class="check-imp" ${p.important?'checked':''} onchange="toggleImportant(${p.id},this.checked)" title="Star problem"></div>
@@ -453,7 +611,12 @@ function rowHTML(p) {
     <div class="td"><span class="rating-tag ${ratingClass}">${p.rating||'—'}</span></div>
     <div class="td"><span class="phase-tag ${phaseClass}">${p.phase||'—'}</span></div>
     <div class="td"><div class="topic-cell" title="${p.category||''}">${p.category||'—'}</div></div>
-    <div class="td"><button class="note-btn ${p.note?'has-note':''}" onclick="openNote(${p.id})">${p.note?'📝 Edit':'+ Note'}</button></div>
+    <div class="td">
+      <div class="action-cell">
+        <button class="note-btn ${hasNote?'has-note':''}" onclick="openNote(${p.id})">${hasNote?'📝':'+ Note'}</button>
+        <button class="code-btn ${hasCode?'has-code':''}" onclick="openCode(${p.id})">${hasCode?'&lt;/&gt; View':'&lt;/&gt; Code'}</button>
+      </div>
+    </div>
     <div class="td"><button class="del-btn" onclick="deleteProblem(${p.id})" title="Delete">✕</button></div>
   </div>`;
 }
@@ -523,6 +686,9 @@ function renderProgress() {
   }).join('');
 }
 
+// ============================================================
+// TOGGLE SOLVED / IMPORTANT
+// ============================================================
 async function toggleSolved(id, val) {
   const p = problems.find(x=>x.id===id);
   if(p) { p.solved = val; updateStats(); renderProgress(); }
@@ -530,7 +696,7 @@ async function toggleSolved(id, val) {
     await fetch(`/api/problems/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({solved:val}) });
     showToast(val ? '✅ Marked as solved!' : '↩ Marked unsolved', 'success');
     const row = document.getElementById(`row-${id}`);
-    if(row) { row.classList.toggle('solved-row', val); }
+    if(row) row.classList.toggle('solved-row', val);
   } catch(e) { showToast('❌ Error saving', 'error'); }
 }
 
@@ -541,10 +707,13 @@ async function toggleImportant(id, val) {
     await fetch(`/api/problems/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({important:val}) });
     showToast(val ? '⭐ Starred!' : '✩ Unstarred', 'success');
     const row = document.getElementById(`row-${id}`);
-    if(row) { row.classList.toggle('important-row', val); }
+    if(row) row.classList.toggle('important-row', val);
   } catch(e) { showToast('❌ Error saving', 'error'); }
 }
 
+// ============================================================
+// NOTE MODAL
+// ============================================================
 function openNote(id) {
   noteTargetId = id;
   const p = problems.find(x=>x.id===id);
@@ -566,13 +735,16 @@ async function saveNote() {
   } catch(e) { showToast('❌ Error saving note', 'error'); }
 }
 
+// ============================================================
+// ADD PROBLEM MODAL
+// ============================================================
 function openAdd() {
   document.getElementById('modal-title').textContent = 'Add New Problem';
-  ['f-type','f-number','f-name','f-contest','f-rating','f-topic','f-category','f-hft'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el.tagName==='SELECT') el.value = el.options[0].value;
-    else el.value = '';
+  ['f-number','f-name','f-contest','f-rating','f-topic','f-category','f-hft'].forEach(id => {
+    document.getElementById(id).value = '';
   });
+  document.getElementById('f-type').value = 'CF';
+  document.getElementById('f-phase').value = 'Phase A';
   openModal('add-modal');
 }
 
@@ -610,11 +782,299 @@ async function deleteProblem(id) {
   } catch(e) { showToast('❌ Error deleting', 'error'); }
 }
 
+// ============================================================
+// C++ SYNTAX HIGHLIGHTER
+// ============================================================
+function highlightCpp(code) {
+  // Escape HTML first
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const keywords = /\b(auto|break|case|catch|class|const|constexpr|continue|default|delete|do|else|enum|explicit|extern|false|for|friend|goto|if|inline|mutable|namespace|new|noexcept|nullptr|operator|override|private|protected|public|register|return|sizeof|static|static_assert|struct|switch|template|this|throw|true|try|typedef|typename|union|using|virtual|volatile|while)\b/g;
+  const types = /\b(bool|char|char16_t|char32_t|double|float|int|int8_t|int16_t|int32_t|int64_t|uint8_t|uint16_t|uint32_t|uint64_t|long|short|signed|unsigned|void|wchar_t|size_t|ptrdiff_t|string|wstring)\b/g;
+  const stl = /\b(vector|map|set|unordered_map|unordered_set|multimap|multiset|pair|tuple|list|deque|queue|priority_queue|stack|array|bitset|optional|variant|any|span|string_view|function|unique_ptr|shared_ptr|weak_ptr|make_pair|make_tuple|make_unique|make_shared|sort|reverse|lower_bound|upper_bound|binary_search|max|min|swap|abs|gcd|lcm|accumulate|fill|find|count|copy|move|begin|end|rbegin|rend|push_back|pop_back|emplace_back|insert|erase|clear|size|empty|front|back|top|push|pop)\b/g;
+
+  // Tokenise line by line to handle comments correctly
+  const lines = code.split('\n');
+  const result = [];
+  let inBlockComment = false;
+
+  for (const rawLine of lines) {
+    let line = rawLine;
+    let out = '';
+    let i = 0;
+
+    // If inside block comment, handle continuation
+    if (inBlockComment) {
+      const end = line.indexOf('*/');
+      if (end === -1) {
+        result.push(`<span class="tok-cmt">${esc(line)}</span>`);
+        continue;
+      } else {
+        out += `<span class="tok-cmt">${esc(line.slice(0, end+2))}</span>`;
+        i = end + 2;
+        inBlockComment = false;
+      }
+    }
+
+    // Process character by character for accurate tokenisation
+    while (i < line.length) {
+      // Line comment
+      if (line[i] === '/' && line[i+1] === '/') {
+        out += `<span class="tok-cmt">${esc(line.slice(i))}</span>`;
+        i = line.length;
+        break;
+      }
+      // Block comment start
+      if (line[i] === '/' && line[i+1] === '*') {
+        const end = line.indexOf('*/', i+2);
+        if (end === -1) {
+          out += `<span class="tok-cmt">${esc(line.slice(i))}</span>`;
+          inBlockComment = true;
+          i = line.length;
+          break;
+        } else {
+          out += `<span class="tok-cmt">${esc(line.slice(i, end+2))}</span>`;
+          i = end + 2;
+          continue;
+        }
+      }
+      // Preprocessor
+      if (i === 0 && line[i] === '#') {
+        // tokenise #include <...> or "..."
+        const rest = line.slice(i);
+        const m = rest.match(/^(#\s*\w+)(\s*)(["<][^">]*[">])?(.*)$/);
+        if (m) {
+          out += `<span class="tok-pre">${esc(m[1])}</span>${esc(m[2])}`;
+          if (m[3]) out += `<span class="tok-str">${esc(m[3])}</span>`;
+          if (m[4]) out += esc(m[4]);
+          i = line.length;
+          break;
+        }
+      }
+      // String / char literal
+      if (line[i] === '"' || line[i] === "'") {
+        const q = line[i];
+        let j = i+1;
+        while (j < line.length) {
+          if (line[j] === '\\') { j += 2; continue; }
+          if (line[j] === q) { j++; break; }
+          j++;
+        }
+        out += `<span class="tok-str">${esc(line.slice(i,j))}</span>`;
+        i = j;
+        continue;
+      }
+      // Number
+      if (/[0-9]/.test(line[i]) || (line[i] === '.' && /[0-9]/.test(line[i+1]||''))) {
+        let j = i;
+        while (j < line.length && /[0-9a-fA-FxXeE._uUlL]/.test(line[j])) j++;
+        out += `<span class="tok-num">${esc(line.slice(i,j))}</span>`;
+        i = j;
+        continue;
+      }
+      // Identifier / keyword
+      if (/[a-zA-Z_]/.test(line[i])) {
+        let j = i;
+        while (j < line.length && /[a-zA-Z0-9_]/.test(line[j])) j++;
+        const word = line.slice(i,j);
+        const isKw = /^(auto|break|case|catch|class|const|constexpr|continue|default|delete|do|else|enum|explicit|extern|false|for|friend|goto|if|inline|mutable|namespace|new|noexcept|nullptr|operator|override|private|protected|public|register|return|sizeof|static|static_assert|struct|switch|template|this|throw|true|try|typedef|typename|union|using|virtual|volatile|while)$/.test(word);
+        const isType = /^(bool|char|char16_t|char32_t|double|float|int|int8_t|int16_t|int32_t|int64_t|uint8_t|uint16_t|uint32_t|uint64_t|long|short|signed|unsigned|void|wchar_t|size_t|ptrdiff_t|string|wstring)$/.test(word);
+        const isStl = /^(vector|map|set|unordered_map|unordered_set|multimap|multiset|pair|tuple|list|deque|queue|priority_queue|stack|array|bitset|optional|variant|any|span|string_view|function|unique_ptr|shared_ptr|weak_ptr|make_pair|make_tuple|make_unique|make_shared|sort|reverse|lower_bound|upper_bound|binary_search|max|min|swap|abs|gcd|lcm|accumulate|fill|find|count|copy|move|begin|end|rbegin|rend|push_back|pop_back|emplace_back|insert|erase|clear|size|empty|front|back|top|push|pop)$/.test(word);
+        // Check if followed by ( → function call
+        const afterJ = line[j];
+        const isFn = afterJ === '(' && !isKw && !isType && !isStl;
+        if (isKw) out += `<span class="tok-kw">${esc(word)}</span>`;
+        else if (isType) out += `<span class="tok-type">${esc(word)}</span>`;
+        else if (isStl) out += `<span class="tok-stl">${esc(word)}</span>`;
+        else if (isFn) out += `<span class="tok-fn">${esc(word)}</span>`;
+        else out += esc(word);
+        i = j;
+        continue;
+      }
+      // Operators
+      if (/[+\-*/%=<>!&|^~?:;,.()\[\]{}]/.test(line[i])) {
+        out += `<span class="tok-op">${esc(line[i])}</span>`;
+        i++;
+        continue;
+      }
+      out += esc(line[i]);
+      i++;
+    }
+
+    result.push(out);
+  }
+
+  return result.join('\n');
+}
+
+// ============================================================
+// CODE MODAL
+// ============================================================
+function openCode(id) {
+  codeTargetId = id;
+  codeEditMode = false;
+  codeActiveTab = 'code';
+  const p = problems.find(x => x.id === id);
+  const numStr = p.number ? `[${p.number}] ` : '';
+  document.getElementById('cm-filename').textContent = `${p.type.toLowerCase()}_${(p.number||p.id).replace(/[^a-zA-Z0-9]/g,'_')}.cpp`;
+  
+  // Populate
+  const code = p.code || '';
+  const note = p.note || '';
+  document.getElementById('cm-textarea').value = code;
+  document.getElementById('cm-note-textarea').value = note;
+
+  renderCodeView(code);
+  renderNoteView(note);
+  updateCodeStats(code);
+
+  // Reset UI state
+  setCodeEditMode(false);
+  switchTab('code');
+
+  document.getElementById('code-modal').classList.add('open');
+}
+
+function closeCodeModal() {
+  document.getElementById('code-modal').classList.remove('open');
+}
+
+function renderCodeView(code) {
+  const lines = code.split('\n');
+  const lineNums = lines.map((_,i) => i+1).join('\n');
+  document.getElementById('cm-line-nums').textContent = lineNums || '1';
+  document.getElementById('cm-highlighted').innerHTML = highlightCpp(code) || '<span style="color:#3d444d;font-style:italic">// No code yet — click Edit to start writing</span>';
+}
+
+function renderNoteView(note) {
+  document.getElementById('cm-note-display').textContent = note || '';
+}
+
+function updateCodeStats(code) {
+  const lines = code ? code.split('\n').length : 0;
+  const chars = code ? code.length : 0;
+  document.getElementById('cm-line-count').textContent = `${lines} line${lines!==1?'s':''}`;
+  document.getElementById('cm-char-count').textContent = `${chars} chars`;
+}
+
+function setCodeEditMode(edit) {
+  codeEditMode = edit;
+  document.getElementById('cm-view').style.display = edit ? 'none' : 'block';
+  document.getElementById('cm-editor').classList.toggle('visible', edit);
+  document.getElementById('cm-edit-btn').classList.toggle('active-edit', edit);
+  document.getElementById('cm-edit-btn').textContent = edit ? '👁 View' : '✎ Edit';
+  document.getElementById('cm-save-btn').style.display = edit ? 'inline-block' : 'none';
+
+  // Note panel edit/view
+  if (codeActiveTab === 'note') {
+    document.getElementById('cm-note-display').style.display = edit ? 'none' : 'block';
+    document.getElementById('cm-note-textarea').style.display = edit ? 'block' : 'none';
+  }
+}
+
+function toggleCodeEdit() {
+  if (codeEditMode) {
+    // Switch to view, re-render highlights
+    const code = document.getElementById('cm-textarea').value;
+    renderCodeView(code);
+    updateCodeStats(code);
+  }
+  setCodeEditMode(!codeEditMode);
+}
+
+function onCodeInput() {
+  const code = document.getElementById('cm-textarea').value;
+  updateCodeStats(code);
+}
+
+function switchTab(tab) {
+  codeActiveTab = tab;
+  document.getElementById('tab-code').classList.toggle('active', tab==='code');
+  document.getElementById('tab-note').classList.toggle('active', tab==='note');
+
+  const codePanel = document.getElementById('cm-code-panel');
+  const notePanel = document.getElementById('cm-note-panel');
+
+  if (tab === 'code') {
+    codePanel.style.display = 'block';
+    notePanel.style.display = 'none';
+  } else {
+    codePanel.style.display = 'none';
+    notePanel.style.display = 'block';
+    // Sync note content
+    const p = problems.find(x=>x.id===codeTargetId);
+    if (codeEditMode) {
+      document.getElementById('cm-note-textarea').style.display = 'block';
+      document.getElementById('cm-note-display').style.display = 'none';
+    } else {
+      document.getElementById('cm-note-textarea').style.display = 'none';
+      document.getElementById('cm-note-display').style.display = 'block';
+    }
+  }
+}
+
+async function saveCode() {
+  const code = document.getElementById('cm-textarea').value;
+  const note = document.getElementById('cm-note-textarea').value || 
+               (problems.find(x=>x.id===codeTargetId)||{}).note || '';
+  
+  const p = problems.find(x=>x.id===codeTargetId);
+  if(p) { p.code = code; p.note = note; }
+  
+  try {
+    await fetch(`/api/problems/${codeTargetId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, note })
+    });
+    // Switch back to view
+    renderCodeView(code);
+    renderNoteView(note);
+    setCodeEditMode(false);
+    showToast('💾 Code saved!', 'success');
+    renderTable(); // update button states
+  } catch(e) {
+    showToast('❌ Error saving code', 'error');
+  }
+}
+
+async function copyCode() {
+  const p = problems.find(x=>x.id===codeTargetId);
+  const code = codeEditMode
+    ? document.getElementById('cm-textarea').value
+    : (p && p.code) || '';
+  try {
+    await navigator.clipboard.writeText(code);
+    const flash = document.getElementById('cm-copy-flash');
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 1800);
+  } catch(e) {
+    showToast('❌ Clipboard not available', 'error');
+  }
+}
+
+// ============================================================
+// GENERIC MODAL UTILS
+// ============================================================
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(el => el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); }));
-document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open')); });
 
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); });
+});
+document.getElementById('code-modal').addEventListener('click', e => {
+  if(e.target === document.getElementById('code-modal')) closeCodeModal();
+});
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') {
+    closeCodeModal();
+    document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  }
+});
+
+// ============================================================
+// TOAST
+// ============================================================
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -622,6 +1082,9 @@ function showToast(msg, type='success') {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ============================================================
+// BOOT
+// ============================================================
 load();
 </script>
 </body>
